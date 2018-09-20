@@ -41,22 +41,29 @@ class MyGame(Window):
         self.player_sprite.center_y = 64
         self.all_sprites_list.append(self.player_sprite)
 
-        # Set up the walls
-        # Make a row of boxes
-        for x in range(173, 650, 64):
-            wall = Sprite("images/gift_box.png", SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = 200
-            self.all_sprites_list.append(wall)
-            self.wall_list.append(wall)
+        def create_walls(bottom, top, freq, axis, align):
+            for j in range(bottom, top, freq):
+                wall = Sprite("images/gift_box.png", SPRITE_SCALING)
+                if axis == 'x':
+                    wall.center_x = j
+                    wall.center_y = align
+                if axis == 'y':
+                    wall.center_x = align
+                    wall.center_y = j
+                self.all_sprites_list.append(wall)
+                self.wall_list.append(wall)
 
-        # Make a column of boxes
-        for y in range(273, 500, 64):
-            wall = Sprite("images/gift_box.png", SPRITE_SCALING)
-            wall.center_x =465
-            wall.center_y = y
-            self.all_sprites_list.append(wall)
-            self.wall_list.append(wall)
+        # middle column
+        create_walls(273, 600, 100, 'y', 465)
+
+        # right most column
+        create_walls(250, 600, 80, 'y', 550)
+
+        # left most column
+        create_walls(240, 600, 50, 'y', 200)
+
+        # horizontal middle row
+        create_walls(173, 650, 48, 'x', 200)
 
         self.physics_engine = PhysicsEngineSimple(self.player_sprite,
                                                   self.wall_list)
