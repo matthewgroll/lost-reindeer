@@ -45,8 +45,8 @@ class MyGame(Window):
         self.player_sprite = Sprite("images/deer.png", SPRITE_SCALING*0.5)
 
         # Set up the player
-        self.player_sprite.center_x = 300
-        self.player_sprite.center_y = 450
+        self.player_sprite.center_x = 50
+        self.player_sprite.center_y = 50
         self.all_sprites_list.append(self.player_sprite)
 
         # create tree
