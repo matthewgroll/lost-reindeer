@@ -32,6 +32,8 @@ class MyGame(Window):
         self.wall_physics_engine = None
         self.has_key = False
         self.key_changed = False
+        self.inventory = None
+        self.inv_key = None
 
     def setup(self):
         # Set up the game
@@ -42,14 +44,9 @@ class MyGame(Window):
         self.score = 0
         self.player_sprite = Sprite("images/deer.png", SPRITE_SCALING*0.5)
 
-        self.player_sprite.having_key_textures = []
-        self.player_sprite.having_key_textures.append(load_texture("images/deer_key.png"))
-
-        self.player_sprite.texture_change_distance = 20
-
         # Set up the player
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 64
+        self.player_sprite.center_x = 300
+        self.player_sprite.center_y = 450
         self.all_sprites_list.append(self.player_sprite)
 
         # create tree
@@ -71,6 +68,18 @@ class MyGame(Window):
         self.key.center_x = 300
         self.key.center_y = 400
         self.coin_list.append(self.key)
+
+        # create inventory pocket
+        self.inventory = Sprite("images/inventory.png", SPRITE_SCALING*0.8)
+        self.inventory.center_x = 760
+        self.inventory.center_y = 30
+        self.all_sprites_list.append(self.inventory)
+
+        # create inventory key
+        self.inv_key = Sprite("images/key.png", SPRITE_SCALING*0.6)
+        self.inv_key.center_x = 762.5
+        self.inv_key.center_y = 30
+        self.all_sprites_list.append(self.inv_key)
 
         def create_walls(start, end, freq, axis, align):
             for j in range(start, end, freq):
@@ -116,6 +125,9 @@ class MyGame(Window):
         self.wall_list.draw()
         self.player_sprite.draw()
         self.tree.draw()
+        self.inventory.draw()
+        self.inv_key.draw()
+        self.inv_key.alpha = 0
         self.coin_list.draw()
 
     def on_key_press(self, val, modifiers):
@@ -150,9 +162,11 @@ class MyGame(Window):
         if self.has_key and not self.key_changed:
             self.wall_list.remove(self.gate)
             self.key_changed = True
-            self.player_sprite.filename = "images/deer_key.png"
-            # self.player_sprite = Sprite("images/deer_key.png", SPRITE_SCALING*0.5)
+            self.inv_key.alpha = 1
             self.player_sprite.update()
+
+        if self.has_key and self.gate in self.coin_list:
+            self.inv_key.alpha = 1
 
 
 def main():
@@ -163,3 +177,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
