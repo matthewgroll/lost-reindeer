@@ -26,7 +26,10 @@ class MyGame(Window):
         self.score = 0
         self.player_sprite = None
         self.wall_list = None
-        self.physics_engine = None
+        self.tree = None
+        self.gate = None
+        self.wall_physics_engine = None
+
 
     def setup(self):
         # Set up the game
@@ -34,15 +37,29 @@ class MyGame(Window):
         self.wall_list = SpriteList()
 
         self.score = 0
-        self.player_sprite = Sprite("images/deer.png", SPRITE_SCALING)
+        self.player_sprite = Sprite("images/deer.png", SPRITE_SCALING*0.5)
 
         # Set up the player
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 64
         self.all_sprites_list.append(self.player_sprite)
 
-        def create_walls(bottom, top, freq, axis, align):
-            for j in range(bottom, top, freq):
+        # create tree
+        self.tree = Sprite("images/tree.png", SPRITE_SCALING*2)
+        self.tree.center_x = 80
+        self.tree.center_y = 500
+        self.all_sprites_list.append(self.tree)
+        self.wall_list.append(self.tree)
+
+        # create gate
+        self.gate = Sprite("images/gate.png", SPRITE_SCALING*1.4)
+        self.gate.center_x = 80
+        self.gate.center_y = 200
+        self.all_sprites_list.append(self.gate)
+        self.wall_list.append(self.gate)
+
+        def create_walls(start, end, freq, axis, align):
+            for j in range(start, end, freq):
                 wall = Sprite("images/gift_box.png", SPRITE_SCALING)
                 if axis == 'x':
                     wall.center_x = j
@@ -65,8 +82,15 @@ class MyGame(Window):
         # horizontal middle row
         create_walls(173, 650, 48, 'x', 200)
 
-        self.physics_engine = PhysicsEngineSimple(self.player_sprite,
-                                                  self.wall_list)
+        # borders around window: left, right, top, bottom
+        create_walls(-50, 650, 30, 'y', -20)
+        create_walls(-50, 650, 30, 'y', 820)
+        create_walls(-20, 820, 30, 'x', -15)
+        create_walls(-20, 820, 30, 'x', 620)
+
+
+        self.wall_physics_engine = PhysicsEngineSimple(self.player_sprite,
+                                                       self.wall_list)
 
         # Background color
         set_background_color(color.ANTIQUE_BRONZE)
@@ -78,6 +102,8 @@ class MyGame(Window):
         # Draw sprites
         self.wall_list.draw()
         self.player_sprite.draw()
+        self.tree.draw()
+        self.gate.draw()
 
     def on_key_press(self, val, modifiers):
         # Called when a key is pressed
@@ -101,7 +127,7 @@ class MyGame(Window):
 
     def update(self, delta_time):
 
-        self.physics_engine.update()
+        self.wall_physics_engine.update()
 
 
 def main():
