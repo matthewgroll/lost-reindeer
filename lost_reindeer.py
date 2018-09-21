@@ -28,16 +28,24 @@ class MyGame(Window):
         self.wall_list = None
         self.tree = None
         self.gate = None
+        self.key = None
         self.wall_physics_engine = None
-
+        self.has_key = False
+        self.key_changed = False
 
     def setup(self):
         # Set up the game
         self.all_sprites_list = SpriteList()
         self.wall_list = SpriteList()
+        self.coin_list = SpriteList()
 
         self.score = 0
         self.player_sprite = Sprite("images/deer.png", SPRITE_SCALING*0.5)
+
+        self.player_sprite.having_key_textures = []
+        self.player_sprite.having_key_textures.append(load_texture("images/deer_key.png"))
+
+        self.player_sprite.texture_change_distance = 20
 
         # Set up the player
         self.player_sprite.center_x = 50
@@ -55,8 +63,14 @@ class MyGame(Window):
         self.gate = Sprite("images/gate.png", SPRITE_SCALING*1.4)
         self.gate.center_x = 80
         self.gate.center_y = 200
-        self.all_sprites_list.append(self.gate)
         self.wall_list.append(self.gate)
+        self.coin_list.append(self.gate)
+
+        # create key
+        self.key = Sprite("images/key.png", SPRITE_SCALING*0.5)
+        self.key.center_x = 300
+        self.key.center_y = 400
+        self.coin_list.append(self.key)
 
         def create_walls(start, end, freq, axis, align):
             for j in range(start, end, freq):
@@ -88,7 +102,6 @@ class MyGame(Window):
         create_walls(-20, 820, 30, 'x', -15)
         create_walls(-20, 820, 30, 'x', 620)
 
-
         self.wall_physics_engine = PhysicsEngineSimple(self.player_sprite,
                                                        self.wall_list)
 
@@ -103,7 +116,7 @@ class MyGame(Window):
         self.wall_list.draw()
         self.player_sprite.draw()
         self.tree.draw()
-        self.gate.draw()
+        self.coin_list.draw()
 
     def on_key_press(self, val, modifiers):
         # Called when a key is pressed
@@ -126,8 +139,20 @@ class MyGame(Window):
             self.player_sprite.change_x = 0
 
     def update(self, delta_time):
-
         self.wall_physics_engine.update()
+        self.player_sprite.update_animation()
+        coins_hit_list = check_for_collision_with_list(self.player_sprite, self.coin_list)
+
+        for coin in coins_hit_list:
+            coin.kill()
+            self.has_key = True
+
+        if self.has_key and not self.key_changed:
+            self.wall_list.remove(self.gate)
+            self.key_changed = True
+            self.player_sprite.filename = "images/deer_key.png"
+            # self.player_sprite = Sprite("images/deer_key.png", SPRITE_SCALING*0.5)
+            self.player_sprite.update()
 
 
 def main():
@@ -138,6 +163,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
